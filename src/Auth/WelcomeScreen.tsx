@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, Alert} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {multiThemeColor} from '../utils/AppConstants';
@@ -6,6 +6,7 @@ import Button from '../components/Button/Button';
 import Space from '../components/spacer/Space';
 import LottieView from 'lottie-react-native';
 import Heading from '../components/Headings/Heading';
+import {LoginMemberFunction} from '../FireBase/AuthFunction';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {
@@ -16,7 +17,7 @@ import {
   PhoneIcon,
 } from '../utils/Icons';
 import {onGoogleButtonPress} from '../FireBase/GoogleSignMember';
-import {AccessToken, Profile, LoginButton} from 'react-native-fbsdk-next';
+import {LoginButton, AccessToken, Profile} from 'react-native-fbsdk-next';
 
 GoogleSignin.configure({
   webClientId:
@@ -26,7 +27,6 @@ GoogleSignin.configure({
 
 const WelcomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const loginButtonRef = useRef(null);
 
   const handleLogin = () => {
     console.log('Solve me ');
@@ -35,7 +35,7 @@ const WelcomeScreen: React.FC = () => {
   const HandleGoogleSign = () => {
     onGoogleButtonPress(navigation);
   };
-
+  //   =====================================
   const handleLoginFinished = (error, result) => {
     if (error) {
       console.log('Login has error: ' + error);
@@ -65,11 +65,7 @@ const WelcomeScreen: React.FC = () => {
     }
   };
 
-  const handleFacebookLogin = () => {
-    if (loginButtonRef.current) {
-      loginButtonRef.current.props.onLoginFinished();
-    }
-  };
+  //   =====================================
 
   return (
     <View
@@ -131,7 +127,7 @@ const WelcomeScreen: React.FC = () => {
         <Space height={10} />
         <Button
           title="with FaceBook"
-          onPress={handleFacebookLogin}
+          onPress={handleLogin}
           backgroundColor="white"
           TextColor="black"
           leftIcon={<FacebookIcon color={multiThemeColor().main_background} />}
@@ -152,13 +148,13 @@ const WelcomeScreen: React.FC = () => {
           TextColor="black"
           leftIcon={<PersonIcon color={multiThemeColor().main_background} />}
         />
-        <View style={{display: 'none'}}>
+        <View style={{}}>
           <LoginButton
-            ref={loginButtonRef}
             onLoginFinished={handleLoginFinished}
             onLogoutFinished={() => console.log('Logout.')}
           />
         </View>
+
         <Space height={80} />
       </View>
     </View>
