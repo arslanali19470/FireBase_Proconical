@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {multiThemeColor} from '../utils/AppConstants';
@@ -15,22 +16,6 @@ import LottieView from 'lottie-react-native';
 import Heading from '../components/Headings/Heading';
 import {LoginMemberFunction} from '../FireBase/AuthFunction';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
-// import auth from '@react-native-firebase/auth';
-// import {
-//   GoogleSignin,
-//   statusCodes,
-// } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-  webClientId:
-    '177089833677-h180s0apvn56pdg0qdpv3ddu4f0sidfr.apps.googleusercontent.com',
-  offlineAccess: true,
-});
 
 const LoginMember: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -38,35 +23,25 @@ const LoginMember: React.FC = () => {
   const [password, setPassword] = useState<string>('');
 
   const handleLogin = () => {
-    LoginMemberFunction({email, password, setEmail, setPassword, navigation});
-  };
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
 
-  // const onGoogleButtonPress = async () => {
-  //   try {
-  //     await GoogleSignin.hasPlayServices();
-  //     const userInfo = await GoogleSignin.signIn();
-  //     const googleCredential = auth.GoogleAuthProvider.credential(
-  //       userInfo.idToken,
-  //     );
-  //     await auth().signInWithCredential(googleCredential);
-  //     console.log('User signed in with Google!');
-  //     navigation.navigate('DrawerNavigation', {userEmail: userInfo.user.email});
-  //   } catch (error) {
-  //     console.error('Error signing in with Google: ', error);
-  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-  //       Alert.alert('Cancelled', 'Sign in was cancelled');
-  //     } else if (error.code === statusCodes.IN_PROGRESS) {
-  //       Alert.alert('In Progress', 'Sign in is in progress');
-  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-  //       Alert.alert('Error', 'Play services not available or outdated');
-  //     } else {
-  //       Alert.alert(
-  //         'Login Error',
-  //         'An error occurred during Google sign-in. Please try again.',
-  //       );
-  //     }
-  //   }
-  // };
+    if (!trimmedEmail || !trimmedPassword) {
+      ToastAndroid.show(
+        'Kindly fill in all details correctly',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+
+    LoginMemberFunction({
+      email: trimmedEmail,
+      password: trimmedPassword,
+      setEmail,
+      setPassword,
+      navigation,
+    });
+  };
 
   return (
     <View
@@ -75,6 +50,7 @@ const LoginMember: React.FC = () => {
         {backgroundColor: multiThemeColor().main_background},
       ]}>
       <View style={{flex: 1}}>
+        <Space height={20} />
         <Heading
           text="Join Us"
           style={{
@@ -115,6 +91,8 @@ const LoginMember: React.FC = () => {
           onChangeText={text => setEmail(text)}
           style={[styles.textInput, {borderColor: multiThemeColor().textcolor}]}
           placeholderTextColor={multiThemeColor().PlaceHolder}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
         <TextInput
           placeholder="Enter your Password here * "
@@ -134,10 +112,9 @@ const LoginMember: React.FC = () => {
         <Button
           title="Log in"
           onPress={handleLogin}
-          backgroundColor="white"
-          TextColor="black"
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
         />
-
         <Space height={100} />
       </View>
     </View>

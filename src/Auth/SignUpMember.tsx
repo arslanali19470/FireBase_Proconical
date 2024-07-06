@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ToastAndroid,
+} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {multiThemeColor} from '../utils/AppConstants';
 import Button from '../components/Button/Button';
@@ -17,10 +23,22 @@ const SignUpMember: React.FC = () => {
   const [password, setPassword] = useState('');
 
   const handleSignUp = () => {
+    const trimmedFullName = fullName.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedFullName || !trimmedEmail || !trimmedPassword) {
+      ToastAndroid.show(
+        'Kindly fill in all details correctly',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+
     SignUpMemberFunction({
-      fullName,
-      email,
-      password,
+      fullName: trimmedFullName,
+      email: trimmedEmail,
+      password: trimmedPassword,
       setEmail,
       setPassword,
       setFullName,
@@ -38,10 +56,7 @@ const SignUpMember: React.FC = () => {
       }}>
       <View style={{flex: 1}}>
         <Space height={10} />
-        <Heading
-          text="Registration"
-          style={{fontSize: 40, color: 'white', marginTop: 40}}
-        />
+        <Heading text="Registration" style={{fontSize: 40, marginTop: 40}} />
         <Space height={30} />
         <View
           style={{
@@ -72,7 +87,7 @@ const SignUpMember: React.FC = () => {
             width: 300,
             marginBottom: 30,
           }}
-          placeholderTextColor="white"
+          placeholderTextColor={multiThemeColor().PlaceHolder}
         />
         <TextInput
           placeholder="Your Email *"
@@ -86,10 +101,10 @@ const SignUpMember: React.FC = () => {
             width: 300,
             marginBottom: 30,
           }}
-          placeholderTextColor="white"
+          placeholderTextColor={multiThemeColor().PlaceHolder}
         />
         <TextInput
-          placeholder=" Create Password *"
+          placeholder="Create Password *"
           value={password}
           onChangeText={text => setPassword(text)}
           style={{
@@ -100,7 +115,7 @@ const SignUpMember: React.FC = () => {
             width: 300,
             marginBottom: 30,
           }}
-          placeholderTextColor="white"
+          placeholderTextColor={multiThemeColor().PlaceHolder}
           secureTextEntry={true}
         />
         <TouchableOpacity

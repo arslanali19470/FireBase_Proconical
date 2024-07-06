@@ -17,10 +17,13 @@ import {ProsConsType, TopicDetail} from '../../utils/TypeExport';
 import SignUpMember from '../../Auth/SignUpMember';
 import LoginMember from '../../Auth/LoginMember';
 import WelcomeScreen from '../../Auth/WelcomeScreen';
+import PhoneNumberScreen from '../../screens/ClientApp/MobileVarification/PhoneNumberScreen';
+import OTPScreen from '../../screens/ClientApp/MobileVarification/OTPScreen';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
-  DrawerNavigation: {userEmail: string};
+  // DrawerNavigation: {userEmail: string};
+  DrawerNavigation: undefined;
   SearchHome: undefined;
   ProandCons: {selectedItem: TopicDetail | undefined};
   // ProandCons: undefined;
@@ -29,6 +32,8 @@ export type RootStackParamList = {
   SignUpMember: undefined;
   LogInMember: undefined;
   WelcomeScreen: undefined;
+  PhoneNumberScreen: undefined;
+  OTPScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,6 +57,8 @@ const MainNavigation: React.FC = () => {
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="SignUpMember" component={SignUpMember} />
         <Stack.Screen name="LogInMember" component={LoginMember} />
+        <Stack.Screen name="PhoneNumberScreen" component={PhoneNumberScreen} />
+        <Stack.Screen name="OTPScreen" component={OTPScreen} />
 
         <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
         <Stack.Screen

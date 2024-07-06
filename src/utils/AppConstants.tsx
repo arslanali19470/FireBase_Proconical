@@ -65,6 +65,7 @@ export const multiThemeColor = () => {
       GrayBox: 'lightgray',
       OnlyWHITE: '#FFF',
       PlaceHolder: '#282c34',
+      ButtonBackGround: '#282c34',
     };
   } else {
     return {
@@ -83,6 +84,7 @@ export const multiThemeColor = () => {
       GrayBox: '#181c1c',
       OnlyWHITE: '#FFF',
       PlaceHolder: '#ccc',
+      ButtonBackGround: '#ffff',
     };
   }
 };

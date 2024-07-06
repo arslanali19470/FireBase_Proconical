@@ -6,9 +6,9 @@ import Button from '../components/Button/Button';
 import Space from '../components/spacer/Space';
 import LottieView from 'lottie-react-native';
 import Heading from '../components/Headings/Heading';
-import {LoginMemberFunction} from '../FireBase/AuthFunction';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {onGoogleButtonPress} from '../FireBase/GoogleSignMember';
 import {
   EmailIcon,
   FacebookIcon,
@@ -16,8 +16,7 @@ import {
   PersonIcon,
   PhoneIcon,
 } from '../utils/Icons';
-import {onGoogleButtonPress} from '../FireBase/GoogleSignMember';
-import {LoginButton, AccessToken, Profile} from 'react-native-fbsdk-next';
+import {handleFacebookLogin} from './FaceBookAuth';
 
 GoogleSignin.configure({
   webClientId:
@@ -29,43 +28,12 @@ const WelcomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleLogin = () => {
-    console.log('Solve me ');
+    console.log('Solve me');
   };
 
   const HandleGoogleSign = () => {
     onGoogleButtonPress(navigation);
   };
-  //   =====================================
-  const handleLoginFinished = (error, result) => {
-    if (error) {
-      console.log('Login has error: ' + error);
-    } else if (result.isCancelled) {
-      console.log('Login is cancelled.');
-    } else {
-      AccessToken.getCurrentAccessToken()
-        .then(data => {
-          console.log(data.accessToken.toString());
-
-          // Retrieve profile information along with the access token
-          Profile.getCurrentProfile()
-            .then(currentProfile => {
-              if (currentProfile) {
-                console.log(
-                  'The current logged user is: ' +
-                    currentProfile.name +
-                    '. His profile id is: ' +
-                    currentProfile.userID,
-                );
-                Alert.alert(currentProfile.name);
-              }
-            })
-            .catch(err => console.log('Error fetching profile: ', err));
-        })
-        .catch(err => console.log('Error fetching access token: ', err));
-    }
-  };
-
-  //   =====================================
 
   return (
     <View
@@ -102,59 +70,56 @@ const WelcomeScreen: React.FC = () => {
         <Button
           title="Register Account"
           onPress={() => navigation.navigate('SignUpMember')}
-          backgroundColor="white"
-          TextColor="black"
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<EmailIcon color={multiThemeColor().main_background} />}
         />
         <Space height={10} />
-        <Heading text="OR" textAlign="center" />
+        <Heading
+          text="- - OR - -"
+          textAlign="center"
+          color={multiThemeColor().textcolor}
+        />
         <Space height={10} />
         <Button
           title="Log in"
           onPress={() => navigation.navigate('LogInMember')}
-          backgroundColor="white"
-          TextColor="black"
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<EmailIcon color={multiThemeColor().main_background} />}
         />
         <Space height={10} />
         <Button
-          title="with Google"
+          title="Google"
           onPress={HandleGoogleSign}
-          backgroundColor="white"
-          TextColor="black"
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<GoogleIcon color={multiThemeColor().main_background} />}
         />
         <Space height={10} />
         <Button
-          title="with FaceBook"
-          onPress={handleLogin}
-          backgroundColor="white"
-          TextColor="black"
+          title="FaceBook"
+          onPress={() => handleFacebookLogin(navigation)}
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<FacebookIcon color={multiThemeColor().main_background} />}
         />
         <Space height={10} />
         <Button
-          title="with Phone Number"
-          onPress={handleLogin}
-          backgroundColor="white"
-          TextColor="black"
+          title="Phone Number"
+          onPress={() => navigation.navigate('PhoneNumberScreen')}
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<PhoneIcon color={multiThemeColor().main_background} />}
         />
         <Space height={10} />
         <Button
-          title="as Guest"
+          title="Guest"
           onPress={handleLogin}
-          backgroundColor="white"
-          TextColor="black"
+          backgroundColor={multiThemeColor().ButtonBackGround}
+          TextColor={multiThemeColor().main_background}
           leftIcon={<PersonIcon color={multiThemeColor().main_background} />}
         />
-        <View style={{}}>
-          <LoginButton
-            onLoginFinished={handleLoginFinished}
-            onLogoutFinished={() => console.log('Logout.')}
-          />
-        </View>
-
         <Space height={80} />
       </View>
     </View>

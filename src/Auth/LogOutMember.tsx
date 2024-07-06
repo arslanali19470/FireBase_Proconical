@@ -59,8 +59,8 @@ const LogOutMember = () => {
       <Button
         title="LogOut"
         onPress={() => handleLogoutMember(navigation)}
-        backgroundColor="white"
-        TextColor="black"
+        backgroundColor={multiThemeColor().textcolor}
+        TextColor={multiThemeColor().main_background}
       />
     </View>
   );

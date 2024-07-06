@@ -3,6 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 import {Alert, ToastAndroid} from 'react-native';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
 import {NavigationProp} from '@react-navigation/native';
+import {LoginManager} from 'react-native-fbsdk-next';
 
 // ========================================================================
 // Interfaces
@@ -102,7 +103,7 @@ export const LoginMemberFunction = async ({
       console.log('User signed in!');
       setEmail('');
       setPassword('');
-      navigation.navigate('DrawerNavigation', {userEmail: email});
+      navigation.navigate('DrawerNavigation');
     } else {
       await auth().signOut();
       Alert.alert(
@@ -142,8 +143,20 @@ export const handleLogoutMember = async (
   navigation: NavigationProp<RootStackParamList>,
 ) => {
   try {
-    await auth().signOut();
-    console.log('User signed out!');
+    // Attempt Firebase sign out
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      await auth().signOut();
+      console.log('User signed out from Firebase!');
+    } else {
+      console.log('No user currently signed in with Firebase.');
+    }
+
+    // Attempt Facebook sign out
+    LoginManager.logOut();
+    console.log('User logged out from Facebook!');
+
+    // Show success message
     ToastAndroid.showWithGravityAndOffset(
       'You are signed out!',
       ToastAndroid.LONG,
@@ -151,7 +164,9 @@ export const handleLogoutMember = async (
       25,
       50,
     );
-    navigation.navigate('LogInMember');
+
+    // Navigate to login screen
+    navigation.navigate('WelcomeScreen');
   } catch (error) {
     console.error('Error signing out:', error);
     Alert.alert(
