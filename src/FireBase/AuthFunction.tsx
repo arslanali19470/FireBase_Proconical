@@ -61,21 +61,50 @@ export const SignUpMemberFunction = async ({
 
     await user.sendEmailVerification();
 
-    Alert.alert(
-      'Registration Successful',
-      'Your account has been created. Please verify your email address before logging in.',
+    // Alert.alert(
+    //   'Registration Successful',
+    //   'Your account has been created. Please verify your email address before logging in.',
+    // );
+    ToastAndroid.showWithGravityAndOffset(
+      'Please verify your email address!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
     );
+
     navigation.navigate('LogInMember');
   } catch (error: any) {
     if (error.code === 'auth/email-already-in-use') {
-      Alert.alert(
-        'Registration Error',
+      // Alert.alert(
+      //   'Registration Error',
+      //   'That email address is already in use!',
+      // );
+      ToastAndroid.showWithGravityAndOffset(
         'That email address is already in use!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
       );
     } else if (error.code === 'auth/invalid-email') {
-      Alert.alert('Registration Error', 'That email address is invalid!');
+      // Alert.alert('Registration Error', 'That email address is invalid!');
+      ToastAndroid.showWithGravityAndOffset(
+        'That email address is invalid!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     } else {
-      Alert.alert('Registration Error', 'An error occurred. Please try again.');
+      // Alert.alert('Registration Error', 'An error occurred. Please try again.');
+      ToastAndroid.showWithGravityAndOffset(
+        'Registration Error!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     }
     console.error(error);
   }
@@ -103,12 +132,21 @@ export const LoginMemberFunction = async ({
       console.log('User signed in!');
       setEmail('');
       setPassword('');
-      navigation.navigate('DrawerNavigation');
+      const UserId = userCredential.user?.uid;
+      console.log('User UID:', UserId);
+      navigation.navigate('Dilemmas', {UserID: UserId});
     } else {
       await auth().signOut();
-      Alert.alert(
-        'Email Verification Required',
-        'Please verify your email address before logging in.',
+      // Alert.alert(
+      //   'Email Verification Required',
+      //   'Please verify your email address before logging in.',
+      // );
+      ToastAndroid.showWithGravityAndOffset(
+        'Email Verification Required!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
       );
     }
   } catch (error: any) {
@@ -116,27 +154,67 @@ export const LoginMemberFunction = async ({
       console.error(
         'The password is invalid or the user does not have a password.',
       );
-      Alert.alert(
-        'Invalid Password',
-        'The password is invalid or the user does not have a password.',
+      // Alert.alert(
+      //   'Invalid Password',
+      //   'The password is invalid or the user does not have a password.',
+      // );
+      ToastAndroid.showWithGravityAndOffset(
+        'Invalid Password!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
       );
     } else if (error.code === 'auth/user-not-found') {
       console.error(
         'There is no user record corresponding to this identifier. The user may have been deleted.',
       );
-      Alert.alert(
-        'User Not Found',
-        'There is no user record corresponding to this identifier. The user may have been deleted.',
+      // Alert.alert(
+      //   'User Not Found',
+      //   'There is no user record corresponding to this identifier. The user may have been deleted.',
+      // );
+      ToastAndroid.showWithGravityAndOffset(
+        'User Not Found!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
       );
     } else {
       console.error('An error occurred:', error);
-      Alert.alert('Login Error', 'An error occurred. Please try again.');
+      // Alert.alert('Login Error', 'An error occurred. Please try again.');
+      ToastAndroid.showWithGravityAndOffset(
+        'Login Error!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     }
   }
 };
-
 // ========================================================================
-// handleLogoutMember
+// Anonymus Login Methode:
+// ========================================================================
+export const GuestLogin = (navigation: NavigationProp<RootStackParamList>) => {
+  auth()
+    .signInAnonymously()
+    .then(userCredential => {
+      console.log('User signed in anonymously');
+      const UserId = userCredential.user?.uid;
+      console.log('User UID:', UserId);
+      navigation.navigate('Dilemmas', {UserID: UserId});
+    })
+    .catch(error => {
+      if (error.code === 'auth/operation-not-allowed') {
+        console.log('Enable anonymous in your firebase console.');
+      }
+
+      console.error(error);
+    });
+};
+// ========================================================================
+// handleLogoutMember:
 // ========================================================================
 
 export const handleLogoutMember = async (
@@ -154,7 +232,7 @@ export const handleLogoutMember = async (
 
     // Attempt Facebook sign out
     LoginManager.logOut();
-    console.log('User logged out from Facebook!');
+    // console.log('User logged out from Facebook!');
 
     // Show success message
     ToastAndroid.showWithGravityAndOffset(

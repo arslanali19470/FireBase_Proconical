@@ -1,17 +1,30 @@
 import React from 'react';
-import {View, Alert, StyleSheet, ToastAndroid} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import LottieView from 'lottie-react-native';
 import {multiThemeColor} from '../utils/AppConstants';
 import Heading from '../components/Headings/Heading';
 import Space from '../components/spacer/Space';
 import SubHeading from '../components/SubHeading/SubHeading';
 import Button from '../components/Button/Button';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 import {handleLogoutMember} from '../FireBase/AuthFunction';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
 
+// Define the type for the route parameters
+type LogOutMemberRouteParams = {
+  UserID: string;
+};
+
 const LogOutMember = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route =
+    useRoute<RouteProp<{params: LogOutMemberRouteParams}, 'params'>>();
+  const {UserID} = route.params;
 
   return (
     <View
@@ -59,6 +72,13 @@ const LogOutMember = () => {
       <Button
         title="LogOut"
         onPress={() => handleLogoutMember(navigation)}
+        backgroundColor={multiThemeColor().textcolor}
+        TextColor={multiThemeColor().main_background}
+      />
+      <Space height={15} />
+      <Button
+        title="Back to Home"
+        onPress={() => navigation.navigate('Dilemmas')}
         backgroundColor={multiThemeColor().textcolor}
         TextColor={multiThemeColor().main_background}
       />

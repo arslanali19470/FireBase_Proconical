@@ -6,10 +6,11 @@ import {
   MaterialIcons,
   multiThemeColor,
 } from '../../../utils/AppConstants';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import FormattedList from '../../../CustomComponents/FormattedList';
 import firestore from '@react-native-firebase/firestore';
 import {TopicDetail} from '../../../utils/TypeExport';
+import {DrawerParamList} from '../../../navigation/Drawer_Navigation/DrawerNavigation';
 
 const SearchHome = () => {
   const navigation = useNavigation();
@@ -20,6 +21,9 @@ const SearchHome = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [resetSelection, setResetSelection] = useState(false);
 
+  const route = useRoute<RouteProp<DrawerParamList, 'SearchHome'>>();
+  const {UserID} = route.params;
+
   useEffect(() => {
     const fetchTopics = async () => {
       const doc = await firestore()
@@ -29,14 +33,17 @@ const SearchHome = () => {
 
       if (doc.exists) {
         const data = doc.data();
-        setTopics(data?.topics || []);
+        const filteredTopics = (data?.topics || []).filter(
+          (topic: TopicDetail) => topic.UserID === UserID,
+        );
+        setTopics(filteredTopics);
       } else {
         console.log('No such document!');
       }
     };
 
     fetchTopics();
-  }, []);
+  }, [UserID]);
 
   useEffect(() => {
     if (searchQuery === '') {

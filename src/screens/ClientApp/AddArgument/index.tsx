@@ -76,7 +76,8 @@ const AddArgument: React.FC<ArgumentScreenProps> = ({route}) => {
       importance: sliderValue,
       type: selectedId === '1' ? 'Pros' : 'Cons',
       TopicName: selectedItem?.TopicName || '',
-      TopicId: selectedItem?.id || uuid.v4().toString(), // Ensure TopicId is a string
+      TopicId: selectedItem?.id || uuid.v4().toString(),
+      UserID: UserID || '',
     };
 
     try {

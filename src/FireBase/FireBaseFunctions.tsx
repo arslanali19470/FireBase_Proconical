@@ -1,7 +1,7 @@
 // utils/handleDelete.ts
 
 import firestore from '@react-native-firebase/firestore';
-import {Alert} from 'react-native';
+import {Alert, ToastAndroid} from 'react-native';
 import {ProsConsType, TopicDetail} from '../utils/TypeExport';
 
 // =======================================================================
@@ -43,7 +43,14 @@ export const handleDelete = async (itemId: string): Promise<void> => {
             {merge: true},
           );
 
-          Alert.alert('Success', 'Item moved to trash');
+          // Alert.alert('Success', 'Item moved to trash');
+          ToastAndroid.showWithGravityAndOffset(
+            'Item moved to trash!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
         }
       }
     }
@@ -65,19 +72,54 @@ export const handleDelete = async (itemId: string): Promise<void> => {
               trash: updatedTrash,
             });
 
-            Alert.alert('Success', 'Item permanently deleted');
+            // Alert.alert('Success', 'Item permanently deleted');
+            ToastAndroid.showWithGravityAndOffset(
+              'Item permanently deleted!',
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              25,
+              50,
+            );
           } else {
-            Alert.alert('Error', 'Item not found in trash');
+            // Alert.alert('Error', 'Item not found in trash');
+            ToastAndroid.showWithGravityAndOffset(
+              'Item not found in trash!',
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              25,
+              50,
+            );
           }
         } else {
-          Alert.alert('Error', 'No trash data found');
+          // Alert.alert('Error', 'No trash data found');
+          ToastAndroid.showWithGravityAndOffset(
+            'No trash data found!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
         }
       } else {
-        Alert.alert('Error', 'Trash document does not exist');
+        // Alert.alert('Error', 'Trash document does not exist');
+        ToastAndroid.showWithGravityAndOffset(
+          'Trash document does not exist!',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
       }
     }
   } catch (error) {
-    Alert.alert('Error', 'Failed to delete data');
+    // Alert.alert('Error', 'Failed to delete data');
+    ToastAndroid.showWithGravityAndOffset(
+      'Failed to delete data!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
     console.error('Firestore Error: ', error);
   }
 };
@@ -138,18 +180,53 @@ export const handleRestore = async (itemId: string): Promise<void> => {
             {merge: true},
           );
 
-          Alert.alert('Success', 'Item restored to topics');
+          // Alert.alert('Success', 'Item restored to topics');
+          ToastAndroid.showWithGravityAndOffset(
+            'Item restored to topics!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
         } else {
-          Alert.alert('Error', 'Item not found in trash');
+          // Alert.alert('Error', 'Item not found in trash');
+          ToastAndroid.showWithGravityAndOffset(
+            'Item not found in trash!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
         }
       } else {
-        Alert.alert('Error', 'No trash data found');
+        // Alert.alert('Error', 'No trash data found');
+        ToastAndroid.showWithGravityAndOffset(
+          'No trash data found!',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
       }
     } else {
-      Alert.alert('Error', 'Trash document does not exist');
+      // Alert.alert('Error', 'Trash document does not exist');
+      ToastAndroid.showWithGravityAndOffset(
+        'Trash document does not exist!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     }
   } catch (error) {
-    Alert.alert('Error', 'Failed to restore data');
+    // Alert.alert('Error', 'Failed to restore data');
+    ToastAndroid.showWithGravityAndOffset(
+      'Failed to restore data!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
     console.error('Firestore Error: ', error);
   }
 };

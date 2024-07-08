@@ -1,52 +1,79 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-
+import {StyleSheet, View, TextInput, ToastAndroid, Alert} from 'react-native';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import Heading from '../../../components/Headings/Heading';
 import Space from '../../../components/spacer/Space';
 import LottieView from 'lottie-react-native';
-import Button from '../../../components/Button/Button';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {multiThemeColor} from '../../../utils/AppConstants';
-import PhoneInput from 'react-native-phone-number-input';
+import {RootStackParamList} from '../../../navigation/MainNavigation/MainNavigation'; // Adjust the import path accordingly
+import Button from '../../../components/Button/Button';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type OTPScreenRouteProp = RouteProp<RootStackParamList, 'OTPScreen'>;
 
 const OTPScreen: React.FC = () => {
-  const [otp, setOtp] = useState(['', '', '', '']);
-  const navigation = useNavigation();
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
+  const route = useRoute<OTPScreenRouteProp>();
+  const {confirm} = route.params as {
+    confirm: FirebaseAuthTypes.ConfirmationResult;
+  };
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, 'OTPScreen'>>();
+
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
 
-  const handleChange = (text: string, index: number) => {
-    if (text.length > 1) {
-      text = text[text.length - 1];
-    }
+  const showToast = (message: string) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+    );
+  };
 
-    let newOtp = [...otp];
-    newOtp[index] = text;
+  const handleChange = (text: string, index: number) => {
+    const cleanText = text.slice(-1);
+    const newOtp = [...otp];
+    newOtp[index] = cleanText;
     setOtp(newOtp);
 
-    if (text !== '' && index < otp.length - 1) {
+    if (cleanText !== '' && index < otp.length - 1) {
       inputRefs.current[index + 1]?.focus();
+    }
+
+    if (index === otp.length - 1 && newOtp.every(digit => digit !== '')) {
+      confirmCode(newOtp.join(''));
     }
   };
 
   const handleKeyPress = (e: any, index: number) => {
     if (e.nativeEvent.key === 'Backspace' && otp[index] === '') {
       if (index > 0) {
-        let newOtp = [...otp];
+        const newOtp = [...otp];
         newOtp[index - 1] = '';
         setOtp(newOtp);
         inputRefs.current[index - 1]?.focus();
       }
+    }
+  };
+
+  const confirmCode = async (code: string) => {
+    if (code.length !== 6) {
+      showToast('Kindly fill the OTP correctly.');
+      return;
+    }
+    try {
+      await confirm.confirm(code);
+      const UserId = auth().currentUser?.uid;
+      navigation.navigate('DrawerNavigation', {UserID: UserId});
+      Alert.alert('All is well');
+    } catch (error) {
+      console.error('Invalid code.', error);
+      showToast('Invalid code.');
     }
   };
 
@@ -59,7 +86,7 @@ const OTPScreen: React.FC = () => {
       <View style={{flex: 1}}>
         <Space height={20} />
         <Heading
-          text="Enter Your Phone Number Below"
+          text="Enter Your Verification Code"
           style={{
             color: multiThemeColor().textcolor,
             marginTop: 20,
@@ -81,7 +108,7 @@ const OTPScreen: React.FC = () => {
 
       <View style={styles.container}>
         <Space height={50} />
-        <View style={{flexDirection: 'row', gap: 20}}>
+        <View style={{flexDirection: 'row', gap: 10}}>
           {otp.map((digit, index) => (
             <TextInput
               key={index}
@@ -90,13 +117,11 @@ const OTPScreen: React.FC = () => {
                 borderWidth: 2,
                 borderColor: 'white',
                 borderRadius: 100,
-                width: 50,
-                height: 50,
+                width: 40,
+                height: 40,
                 color: multiThemeColor().textcolor,
-                fontSize: 25,
-                alignContent: 'center',
-                justifyContent: 'center',
-                alignSelf: 'center',
+                fontSize: 20,
+                paddingTop: 10,
                 textAlign: 'center',
               }}
               maxLength={1}
@@ -107,17 +132,15 @@ const OTPScreen: React.FC = () => {
             />
           ))}
         </View>
-        <Space height={20} />
         <View style={styles.buttonContainer}>
           <Button
-            title="Send Code"
-            onPress={() => console.log('object')}
+            title="Confirm Code"
+            onPress={() => confirmCode(otp.join(''))}
             backgroundColor={multiThemeColor().ButtonBackGround}
             TextColor={multiThemeColor().main_background}
           />
         </View>
       </View>
-
       <Space height={50} />
     </View>
   );
@@ -135,40 +158,16 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
   },
   lottieStyle: {
     height: 300,
     width: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
-  },
-  inputContainer: {
-    marginTop: 30,
-  },
-  safeArea: {
-    backgroundColor: 'pink',
-    width: '100%',
-  },
-  phoneInputContainer: {
-    width: '95%',
-    height: 50,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  phoneInputTextContainer: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-  },
-  phoneInputText: {
-    color: 'black',
   },
   buttonContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    // marginTop: -100,
   },
 });
 

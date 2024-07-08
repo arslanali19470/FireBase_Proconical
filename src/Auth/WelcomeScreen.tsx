@@ -9,6 +9,7 @@ import Heading from '../components/Headings/Heading';
 import {RootStackParamList} from '../navigation/MainNavigation/MainNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {onGoogleButtonPress} from '../FireBase/GoogleSignMember';
+import auth from '@react-native-firebase/auth';
 import {
   EmailIcon,
   FacebookIcon,
@@ -17,6 +18,7 @@ import {
   PhoneIcon,
 } from '../utils/Icons';
 import {handleFacebookLogin} from './FaceBookAuth';
+import {GuestLogin} from '../FireBase/AuthFunction';
 
 GoogleSignin.configure({
   webClientId:
@@ -27,12 +29,16 @@ GoogleSignin.configure({
 const WelcomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const handleLogin = () => {
-    console.log('Solve me');
-  };
+  // const handleLogin = () => {
+  //   console.log('Solve me');
+  // };
 
   const HandleGoogleSign = () => {
     onGoogleButtonPress(navigation);
+  };
+
+  const AnonymusLogIn = () => {
+    GuestLogin(navigation);
   };
 
   return (
@@ -115,7 +121,7 @@ const WelcomeScreen: React.FC = () => {
         <Space height={10} />
         <Button
           title="Guest"
-          onPress={handleLogin}
+          onPress={AnonymusLogIn}
           backgroundColor={multiThemeColor().ButtonBackGround}
           TextColor={multiThemeColor().main_background}
           leftIcon={<PersonIcon color={multiThemeColor().main_background} />}

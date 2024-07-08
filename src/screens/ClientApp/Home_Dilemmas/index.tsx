@@ -32,11 +32,12 @@ export type DrawerScreenProps = {
   route: DrawerScreenRouteProp;
 };
 
-const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation}) => {
+const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation, route}) => {
   const [resetSelection, setResetSelection] = useState(false);
   const [selectedItemCount, setSelectedItemCount] = useState(0);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [topics, setTopics] = useState<TopicDetail[]>([]);
+  const {UserID} = route.params;
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -45,14 +46,17 @@ const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation}) => {
       .onSnapshot(doc => {
         if (doc.exists) {
           const data = doc.data();
-          setTopics(data?.topics || []);
+          const filteredTopics = (data?.topics || []).filter(
+            (topic: TopicDetail) => topic.UserID === UserID,
+          );
+          setTopics(filteredTopics);
         } else {
           console.log('No such document!');
         }
       });
 
     return () => unsubscribe();
-  }, []);
+  }, [UserID]);
 
   useFocusEffect(
     useCallback(() => {
@@ -80,6 +84,7 @@ const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: multiThemeColor().main_background}}>
+      {/* <Text style={{color: 'white'}}>My Id :{UserID}</Text> */}
       {selectedItemCount > 0 ? (
         <View
           style={{
@@ -136,7 +141,9 @@ const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation}) => {
               />
             </Row>
             <TouchableOpacity
-              onPress={() => navigation.navigate('SearchHome')}
+              onPress={() =>
+                navigation.navigate('SearchHome', {UserID: UserID})
+              }
               style={{marginTop: 3}}>
               <MaterialIcons name={'search'} color={'white'} size={25} />
             </TouchableOpacity>
@@ -155,7 +162,7 @@ const Home_Dilemmas: React.FC<DrawerScreenProps> = ({navigation}) => {
       />
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('Dilemmas Description');
+          navigation.navigate('Dilemmas Description', {UserID: UserID});
         }}>
         <LinearGradient
           start={{x: 0, y: 0}}

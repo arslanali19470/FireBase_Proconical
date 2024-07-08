@@ -4,6 +4,7 @@ export interface TopicDetail {
   TopicName: string;
   Date: string;
   Time: string;
+  UserID: string;
 }
 
 export interface ProsConsType {
@@ -13,4 +14,5 @@ export interface ProsConsType {
   description: string;
   importance: number;
   TopicId: string;
+  UserID: string;
 }

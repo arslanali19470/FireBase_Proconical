@@ -3,21 +3,19 @@ import {TouchableOpacity} from 'react-native';
 import {
   createDrawerNavigator,
   DrawerNavigationProp,
+  // DrawerActions,
 } from '@react-navigation/drawer';
 import {
   useNavigation,
   RouteProp,
   DrawerActions,
 } from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-
 import Home_Dilemmas from '../../screens/ClientApp/Home_Dilemmas';
 import Trash from '../../screens/ClientApp/Trash';
 import CustomDrawerContent from '../../components/CustomDrawerContent/CustomDrawerContent';
 import HeaderLeft from '../../components/HeaderLeft/HeaderLeft';
 import Settings from '../../screens/ClientApp/Settings/Index';
 import ProFeatcher from '../../screens/ClientApp/ProFeatcher';
-// import {BLUE2, GRAY} from '../../styles/Colors';
 import {
   BarIcon,
   TrashIcon,
@@ -29,7 +27,6 @@ import {MaterialIcons, multiThemeColor} from '../../utils/AppConstants';
 import {RootStackParamList} from '../MainNavigation/MainNavigation';
 import LogOutMember from '../../Auth/LogOutMember';
 
-// Type definitions for navigation and route
 type DrawerScreenNavigationProp = DrawerNavigationProp<
   RootStackParamList,
   'DrawerNavigation'
@@ -41,22 +38,20 @@ export type DrawerScreenProps = {
   route: DrawerScreenRouteProp;
 };
 
-// Define the type for DrawerParamList
 export type DrawerParamList = {
-  Dilemmas: undefined;
-  Trash: undefined;
+  Dilemmas: {UserID: string};
+  Trash: {UserID: string};
   Settings: undefined;
   'Pro Features': undefined;
-  SearchHome: undefined;
-  'Dilemmas Description': undefined;
-  LogOut: undefined;
+  SearchHome: {UserID: string};
+  'Dilemmas Description': {UserID?: string};
+  LogOut: {UserID: string};
 };
 
-// Create the Drawer Navigator
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
-const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
-  // Use navigation hook with correct type
+const DrawerNavigation: React.FC<DrawerScreenProps> = ({route}) => {
+  const {UserID} = route.params;
   const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
 
   return (
@@ -71,7 +66,6 @@ const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
           color: multiThemeColor().textcolor,
         },
         drawerActiveTintColor: 'white',
-
         drawerPosition: 'left',
         headerStyle: {
           backgroundColor: multiThemeColor().GRAY,
@@ -87,7 +81,9 @@ const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
         headerRight: () => (
           <TouchableOpacity
             style={{marginRight: 20}}
-            onPress={() => navigation.navigate('SearchHome')}>
+            onPress={() =>
+              navigation.navigate('SearchHome', {UserID: UserID || ''})
+            }>
             <MaterialIcons name="search" size={25} color="white" />
           </TouchableOpacity>
         ),
@@ -100,6 +96,7 @@ const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
           drawerIcon: () => <BarIcon color={multiThemeColor().textcolor} />,
           headerShown: false,
         }}
+        initialParams={{UserID}}
       />
       <Drawer.Screen
         name="Trash"
@@ -108,6 +105,7 @@ const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
           drawerIcon: () => <TrashIcon color={multiThemeColor().textcolor} />,
           headerShown: false,
         }}
+        initialParams={{UserID}}
       />
       <Drawer.Screen
         name="Settings"
@@ -136,6 +134,7 @@ const DrawerNavigation: React.FC<DrawerScreenProps> = () => {
           ),
           headerShown: false,
         }}
+        initialParams={{UserID}}
       />
     </Drawer.Navigator>
   );

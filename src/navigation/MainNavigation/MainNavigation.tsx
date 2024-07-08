@@ -19,21 +19,26 @@ import LoginMember from '../../Auth/LoginMember';
 import WelcomeScreen from '../../Auth/WelcomeScreen';
 import PhoneNumberScreen from '../../screens/ClientApp/MobileVarification/PhoneNumberScreen';
 import OTPScreen from '../../screens/ClientApp/MobileVarification/OTPScreen';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
-  // DrawerNavigation: {userEmail: string};
-  DrawerNavigation: undefined;
-  SearchHome: undefined;
+  DrawerNavigation: {UserID: string | undefined};
+  // DrawerNavigation: undefined;
+  // SearchHome: undefined;
+  SearchHome: {UserID: string | undefined};
   ProandCons: {selectedItem: TopicDetail | undefined};
   // ProandCons: undefined;
-  'Dilemmas Description': {selectedItem: TopicDetail | ProsConsType};
+  'Dilemmas Description': {
+    selectedItem?: TopicDetail | ProsConsType;
+    UserID?: string;
+  };
   Argument: {selectedItem: TopicDetail | ProsConsType; mode: 'add' | 'update'};
   SignUpMember: undefined;
   LogInMember: undefined;
   WelcomeScreen: undefined;
   PhoneNumberScreen: undefined;
-  OTPScreen: undefined;
+  OTPScreen: {confirm: FirebaseAuthTypes.ConfirmationResult};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

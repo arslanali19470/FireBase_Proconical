@@ -1,27 +1,44 @@
 import React, {useState, useRef} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-
+import {StyleSheet, View, ToastAndroid} from 'react-native';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import Heading from '../../../components/Headings/Heading';
 import Space from '../../../components/spacer/Space';
 import LottieView from 'lottie-react-native';
 import Button from '../../../components/Button/Button';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {multiThemeColor} from '../../../utils/AppConstants';
 import PhoneInput from 'react-native-phone-number-input';
+import {RootStackParamList} from '../../../navigation/MainNavigation/MainNavigation'; // Update the import path accordingly
 
 const PhoneNumberScreen: React.FC = () => {
   const [value, setValue] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
-  const [valid, setValid] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const showToast = (message: string) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+    );
+  };
+
+  const signInWithPhoneNumber = async (phoneNumber: string) => {
+    if (!phoneNumber) {
+      showToast('Kindly fill the phone number correctly.');
+      return;
+    }
+    try {
+      const confirmation: FirebaseAuthTypes.ConfirmationResult =
+        await auth().signInWithPhoneNumber(phoneNumber);
+      console.log('Code sent to:', phoneNumber);
+      navigation.navigate('OTPScreen', {confirm: confirmation});
+    } catch (error) {
+      console.error('Error signing in with phone number:', error);
+      showToast('Error signing in with phone number.');
+    }
+  };
 
   return (
     <View
@@ -69,10 +86,12 @@ const PhoneNumberScreen: React.FC = () => {
           withShadow
           autoFocus
         />
+        <Space height={10} />
         <View style={styles.buttonContainer}>
           <Button
             title="Send Code"
-            onPress={() => navigation.navigate('OTPScreen')}
+            onPress={() => signInWithPhoneNumber(formattedValue)}
+            // onPress={() => navigation.navigate('OTPScreen')}
             backgroundColor={multiThemeColor().ButtonBackGround}
             TextColor={multiThemeColor().main_background}
           />
@@ -105,31 +124,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
-  inputContainer: {
-    marginTop: 30,
-  },
-  safeArea: {
-    backgroundColor: 'pink',
-    width: '100%',
-  },
   phoneInputContainer: {
     width: '95%',
-    height: 50,
     borderRadius: 8,
     alignItems: 'center',
     alignSelf: 'center',
-  },
-  phoneInputTextContainer: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-  },
-  phoneInputText: {
     color: 'black',
+    padding: 0,
   },
   buttonContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    // marginTop: -100,
   },
 });
 

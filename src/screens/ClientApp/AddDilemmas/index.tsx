@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, TextInput, Alert} from 'react-native';
+import {View, TextInput, Alert, Text, ToastAndroid} from 'react-native';
 import {VStack} from 'native-base';
 import Gradiant_Button from '../../../components/Gradiant_Button/Gradiant_Button';
 import Space from '../../../components/spacer/Space';
@@ -29,6 +29,7 @@ const Add_Dilemmas: React.FC<AddDilemmasScreenProps> = ({
   route,
   navigation,
 }) => {
+  const {UserID} = route.params;
   const selectedItem = route?.params?.selectedItem;
   const isFocused = useIsFocused();
 
@@ -59,7 +60,14 @@ const Add_Dilemmas: React.FC<AddDilemmasScreenProps> = ({
     const cleanedInputValue = inputValue.trim().replace(/\s+/g, ' ');
 
     if (!cleanedInputValue) {
-      Alert.alert('Error', 'Topic name cannot be empty');
+      // Alert.alert('Error', 'Topic name cannot be empty');
+      ToastAndroid.showWithGravityAndOffset(
+        'Topic name cannot be empty!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
       return;
     }
 
@@ -69,6 +77,7 @@ const Add_Dilemmas: React.FC<AddDilemmasScreenProps> = ({
         TopicName: cleanedInputValue,
         Date: ItemDate,
         Time: ItemTime,
+        UserID: UserID || '',
       };
 
       const docRef = firestore().collection('TopicDetails').doc('topics');
@@ -87,7 +96,14 @@ const Add_Dilemmas: React.FC<AddDilemmasScreenProps> = ({
         await docRef.set({topics: [topicDetail]});
       }
 
-      Alert.alert('Success', 'Data has been updated successfully');
+      // Alert.alert('Success', 'Data has been updated successfully');
+      ToastAndroid.showWithGravityAndOffset(
+        'Topic Added successfully!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     } catch (error) {
       Alert.alert('Error', 'Failed to update data');
       console.error('Firestore Error: ', error);
@@ -97,6 +113,7 @@ const Add_Dilemmas: React.FC<AddDilemmasScreenProps> = ({
 
   return (
     <View style={{flex: 1, backgroundColor: multiThemeColor().main_background}}>
+      {/* <Text style={{color: 'white'}}>{UserID}</Text> */}
       <Space height={20} />
       <VStack justifyContent="space-between" style={{flex: 1}}>
         <TextInput

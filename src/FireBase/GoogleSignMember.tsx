@@ -22,9 +22,12 @@ export const onGoogleButtonPress = async (
     const googleCredential = auth.GoogleAuthProvider.credential(
       userInfo.idToken,
     );
-    await auth().signInWithCredential(googleCredential);
+    const userCredential = await auth().signInWithCredential(googleCredential);
+
     console.log('User signed in with Google!');
-    navigation.navigate('DrawerNavigation', {userEmail: userInfo.user.email});
+    const UserId = userCredential.user?.uid;
+    console.log('User UID:', UserId);
+    navigation.navigate('Dilemmas', {UserID: UserId});
   } catch (error) {
     console.error('Error signing in with Google: ', error);
     if ((error as any).code === statusCodes.SIGN_IN_CANCELLED) {

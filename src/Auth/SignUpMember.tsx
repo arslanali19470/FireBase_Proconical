@@ -22,6 +22,11 @@ const SignUpMember: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSignUp = () => {
     const trimmedFullName = fullName.trim();
     const trimmedEmail = email.trim();
@@ -30,6 +35,14 @@ const SignUpMember: React.FC = () => {
     if (!trimmedFullName || !trimmedEmail || !trimmedPassword) {
       ToastAndroid.show(
         'Kindly fill in all details correctly',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      ToastAndroid.show(
+        'This is not a valid email address',
         ToastAndroid.SHORT,
       );
       return;
